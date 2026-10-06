@@ -7,7 +7,7 @@ A small 3D character that walks onto your screen when it's time for something (w
   <img src="docs/settings.png" alt="The settings window with reminders and character options" width="460" />
 </p>
 
-- **Your own reminders.** Repeat every N minutes, or every day at a set time. Ready-made ones for water, lunch, stretching, eye breaks and medicine.
+- **Your own reminders.** Repeat every N minutes or once a day at a set time, on the days you choose: every day, Mon–Fri, weekends, or any mix. Ready-made ones for water, lunch, stretching, eye breaks and medicine.
 - **Stays out of the way.** The buddy walks along the bottom of the screen, above the Dock or taskbar. Clicks go through to your apps everywhere except on its speech bubble, and it never takes keyboard focus.
 - **Your own character.** Load any `.glb` 3D model in place of the built-in robot.
 - **Runs from the menu bar** on macOS and from the system tray on Windows.
@@ -40,7 +40,7 @@ The settings window opens when the app starts. Click **Remind me now** on a remi
 
 ## Using it
 
-- **Add a reminder:** click **Add reminder**, pick a ready-made one or fill in a name, an emoji and the question the buddy should ask, then choose *Every N minutes* or *Every day at* a time.
+- **Add a reminder:** click **Add reminder**, pick a ready-made one or fill in a name, an emoji and the question the buddy should ask, then choose *Every N minutes* or *Once a day at* a time, and the days it should run on.
 - **Answering:** *Yes, I did!* counts it for today and schedules the next visit. *Not yet*, or no answer within 45 seconds, brings the buddy back in 10 minutes. A daily reminder stops asking again about an hour after its time.
 - **Closing the window** does not quit the app. It keeps running from the 💧 in the macOS menu bar, or the water-drop icon in the Windows tray (it may be under the `^` arrow). From there you can call the buddy, open the settings, pause all reminders, or quit.
 
@@ -86,12 +86,9 @@ The builds are not signed with an Apple Developer ID or a Windows certificate, s
 | `renderer.js`, `index.html`, `styles.css` | The overlay: draws the character with three.js and plays one visit |
 | `settings.js`, `settings.html`, `settings.css` | The settings window |
 | `preload.js`, `settings-preload.js` | The bridges between each window and the main process |
+| `schedule.js` | Works out when each reminder is next due |
 | `presets.js` | The ready-made reminders and their texts |
 | `character.js` | Reads the animation list from a `.glb` and guesses which clip fits which moment |
 | `scripts/start.js` | Starts the app from source on any OS |
 | `assets/` | The robot model and the app icons |
 
-## Credits
-
-- Robot model: "RobotExpressive" by Tomás Laulhé, with modifications by Don McCurdy, CC0 1.0, from the [three.js examples](https://github.com/mrdoob/three.js/tree/dev/examples/models/gltf/RobotExpressive).
-- Built with [Electron](https://www.electronjs.org) and [three.js](https://threejs.org).

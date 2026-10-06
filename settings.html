@@ -46,8 +46,14 @@
             <input type="number" id="f-minutes" min="1" max="1440" step="1" /> minutes
           </label>
           <label class="choice">
-            <input type="radio" name="when" id="f-daily" /> Every day at <input type="time" id="f-time" />
+            <input type="radio" name="when" id="f-daily" /> Once a day at <input type="time" id="f-time" />
           </label>
+        </fieldset>
+        <fieldset>
+          <legend>On these days</legend>
+          <div id="day-presets" class="chips"></div>
+          <div id="f-days" class="days"></div>
+          <p id="days-error" class="error" hidden>Pick at least one day.</p>
         </fieldset>
         <div class="dialog-actions">
           <button type="button" id="delete" class="danger">Delete</button>

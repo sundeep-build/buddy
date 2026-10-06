@@ -26,6 +26,11 @@
   box-sizing: border-box;
 }
 
+/* `hidden` must win over the display set by a class */
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -289,6 +294,46 @@ dialog::backdrop {
 
 .emoji-field {
   width: 70px;
+}
+
+/* the seven day toggles in the editor */
+.days {
+  display: flex;
+  gap: 6px;
+}
+
+.days label {
+  flex: 1;
+}
+
+.days input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.days span {
+  display: block;
+  padding: 6px 0;
+  border-radius: 8px;
+  background: var(--control);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+.days input:checked + span {
+  background: var(--accent);
+  color: #fff;
+}
+
+.days input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+fieldset .error {
+  margin: 0;
 }
 
 .emoji-field input {

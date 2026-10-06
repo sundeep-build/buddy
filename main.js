@@ -7,11 +7,10 @@ const fs = require('fs');
 const crypto = require('crypto');
 const { PRESETS, DEFAULT_REMINDERS, DEFAULT_REPLIES } = require('./presets');
 const { ROLES, inspectGlb, guessRoles } = require('./character');
+const { ALL_DAYS, isActiveDay, nextTime } = require('./schedule');
 
 const STAGE_HEIGHT = 500; // px strip along the bottom of the screen that the buddy walks in
 const CHECK_SECONDS = 15; // how often the schedule is checked for a due reminder
-const RETRY_MINUTES = 10; // after "not yet" (or no answer) the buddy comes back sooner
-const DAILY_RETRY_WINDOW_MINUTES = 60; // a daily reminder stops nagging this long after its time
 const VISIT_WATCHDOG_SECONDS = 120; // a visit that never reports back is ended after this
 
 let overlay = null; // the click-through window the buddy walks in
@@ -67,29 +66,8 @@ function rollDay() {
 
 // --- schedule ----------------------------------------------------------------
 
-// The most recent time a daily reminder was (or is) due: today's, or yesterday's if today's is still ahead.
-function lastDailyTime(time) {
-  const [hours, minutes] = time.split(':').map(Number);
-  const at = new Date();
-  at.setHours(hours, minutes, 0, 0);
-  if (at.getTime() > Date.now()) at.setDate(at.getDate() - 1);
-  return at;
-}
-
-function nextTime({ schedule }, retry) {
-  const now = Date.now();
-  if (schedule.type === 'interval') {
-    return now + (retry ? Math.min(RETRY_MINUTES, schedule.minutes) : schedule.minutes) * 60_000;
-  }
-  const last = lastDailyTime(schedule.time);
-  const retryAt = now + RETRY_MINUTES * 60_000;
-  if (retry && retryAt - last.getTime() <= DAILY_RETRY_WINDOW_MINUTES * 60_000) return retryAt;
-  last.setDate(last.getDate() + 1);
-  return last.getTime();
-}
-
 function plan(reminder, { retry = false } = {}) {
-  nextAt.set(reminder.id, nextTime(reminder, retry));
+  nextAt.set(reminder.id, nextTime(reminder, { retry }));
 }
 
 function planAll() {
@@ -100,6 +78,11 @@ function planAll() {
 function checkDue() {
   if (visit || state.paused) return;
   const now = Date.now();
+  // A reminder can come due on one of its days off if the computer slept through
+  // its time; it waits for its next day instead.
+  for (const reminder of state.reminders) {
+    if (nextAt.get(reminder.id) <= now && !isActiveDay(reminder)) plan(reminder);
+  }
   const due = state.reminders
     .filter((reminder) => reminder.enabled && nextAt.get(reminder.id) <= now)
     .sort((a, b) => nextAt.get(a.id) - nextAt.get(b.id));
@@ -258,7 +241,7 @@ function snapshot() {
   return {
     reminders: state.reminders.map((reminder) => ({
       ...reminder,
-      nextAt: reminder.enabled && !state.paused ? nextAt.get(reminder.id) : null,
+      next: reminder.enabled && !state.paused ? whenLabel(nextAt.get(reminder.id)) : null,
       doneToday: state.done[reminder.id] || 0,
     })),
     character: state.character,
@@ -282,6 +265,7 @@ function cleanReminder(input, id) {
     typeof value === 'string' && value.trim() ? value.trim().slice(0, max) : fallback;
   const daily = input.schedule?.type === 'daily' && /^([01]\d|2[0-3]):[0-5]\d$/.test(input.schedule.time);
   const minutes = Math.round(Number(input.schedule?.minutes)) || 30;
+  const days = ALL_DAYS.filter((day) => Array.isArray(input.days) && input.days.includes(day));
   return {
     id,
     name: text(input.name, 'Reminder', 40),
@@ -293,6 +277,7 @@ function cleanReminder(input, id) {
     schedule: daily
       ? { type: 'daily', time: input.schedule.time }
       : { type: 'interval', minutes: Math.min(24 * 60, Math.max(1, minutes)) },
+    days: days.length ? days : ALL_DAYS,
     enabled: input.enabled !== false,
   };
 }
@@ -378,8 +363,15 @@ function setPaused(paused) {
 
 // --- menu bar ------------------------------------------------------------------
 
-function timeLabel(at) {
-  return new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+// "at 13:00", "tomorrow at 13:00" or "Monday at 13:00"
+function whenLabel(at) {
+  const date = new Date(at);
+  const locale = app.getLocale(); // the same 12- or 24-hour clock the settings window shows
+  const time = date.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
+  const daysAway = Math.round((new Date(at).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / 86_400_000);
+  if (daysAway === 0) return `at ${time}`;
+  if (daysAway === 1) return `tomorrow at ${time}`;
+  return `${date.toLocaleDateString(locale, { weekday: 'long' })} at ${time}`;
 }
 
 function refreshTray() {
@@ -391,7 +383,7 @@ function refreshTray() {
       ...state.reminders
         .filter((reminder) => reminder.enabled)
         .map((reminder) => ({
-          label: `${reminder.emoji} ${reminder.name}${state.paused ? '' : ` — next at ${timeLabel(nextAt.get(reminder.id))}`}`,
+          label: `${reminder.emoji} ${reminder.name}${state.paused ? '' : ` — next ${whenLabel(nextAt.get(reminder.id))}`}`,
           enabled: !visit,
           click: () => startVisit(reminder),
         })),

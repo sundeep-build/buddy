@@ -3,6 +3,10 @@
 // which answers by pushing the new state back.
 
 const ROLE_LABELS = { walk: 'Walking', idle: 'Standing', greet: 'Saying hello', happy: 'Happy', sad: 'Sad' };
+// Monday first; the numbers are Date.getDay() values
+const DAYS = [[1, 'Mon'], [2, 'Tue'], [3, 'Wed'], [4, 'Thu'], [5, 'Fri'], [6, 'Sat'], [0, 'Sun']];
+const ALL_DAYS = DAYS.map(([day]) => day);
+const DAY_PRESETS = [['Every day', ALL_DAYS], ['Mon–Fri', [1, 2, 3, 4, 5]], ['Sat–Sun', [6, 0]]];
 const BLANK_REMINDER = { name: '', emoji: '⏰', question: '', schedule: { type: 'interval', minutes: 30 }, enabled: true };
 
 const $ = (id) => document.getElementById(id);
@@ -24,16 +28,25 @@ function fill(node, ...children) {
 
 // --- reminders ---------------------------------------------------------------
 
-function scheduleText({ type, minutes, time }) {
+// "Every day", "Mon–Fri", "Sat–Sun", or the days listed out
+function daysText(days) {
+  const preset = DAY_PRESETS.find(([, presetDays]) => presetDays.length === days.length && presetDays.every((day) => days.includes(day)));
+  if (preset) return preset[0];
+  return DAYS.filter(([day]) => days.includes(day)).map(([, name]) => name).join(', ');
+}
+
+function scheduleText({ schedule: { type, minutes, time }, days = ALL_DAYS }) {
+  const everyDay = days.length === 7;
   if (type === 'daily') {
     const [hours, mins] = time.split(':').map(Number);
     const at = new Date();
     at.setHours(hours, mins, 0, 0);
-    return `Every day at ${clock(at)}`;
+    return `${daysText(days)} at ${clock(at)}`;
   }
-  if (minutes === 1) return 'Every minute';
-  if (minutes % 60 === 0) return minutes === 60 ? 'Every hour' : `Every ${minutes / 60} hours`;
-  return `Every ${minutes} minutes`;
+  let every = `Every ${minutes} minutes`;
+  if (minutes === 1) every = 'Every minute';
+  else if (minutes % 60 === 0) every = minutes === 60 ? 'Every hour' : `Every ${minutes / 60} hours`;
+  return everyDay ? every : `${every}, ${daysText(days)}`;
 }
 
 function clock(date) {
@@ -44,13 +57,11 @@ function statusText(reminder) {
   if (state.visiting === reminder.id) return 'on screen now';
   if (!reminder.enabled) return 'off';
   if (state.paused) return 'paused';
-  const at = new Date(reminder.nextAt);
-  const tomorrow = at.getDate() !== new Date().getDate();
-  return `next ${tomorrow ? 'tomorrow ' : ''}at ${clock(at)}`;
+  return `next ${reminder.next}`;
 }
 
 function reminderCard(reminder) {
-  const details = [scheduleText(reminder.schedule), statusText(reminder)];
+  const details = [scheduleText(reminder), statusText(reminder)];
   if (reminder.doneToday) details.push(`${reminder.doneToday} done today`);
 
   const toggle = el('input', {
@@ -96,7 +107,17 @@ function fillEditor(reminder) {
   $('f-daily').checked = daily;
   $('f-minutes').value = daily ? 30 : reminder.schedule.minutes;
   $('f-time').value = daily ? reminder.schedule.time : '13:00';
+  setDays(reminder.days ?? ALL_DAYS);
   syncWhen();
+}
+
+function setDays(days) {
+  for (const box of $('f-days').querySelectorAll('input')) box.checked = days.includes(Number(box.value));
+  $('days-error').hidden = true;
+}
+
+function chosenDays() {
+  return [...$('f-days').querySelectorAll('input:checked')].map((box) => Number(box.value));
 }
 
 // Only the chosen kind of schedule has to be filled in.
@@ -135,10 +156,24 @@ $('f-time').onfocus = () => {
   syncWhen();
 };
 
+fill($('day-presets'), ...DAY_PRESETS.map(([label, days]) => el('button', { type: 'button', textContent: label, onclick: () => setDays(days) })));
+fill(
+  $('f-days'),
+  ...DAYS.map(([day, name]) =>
+    el('label', {}, el('input', { type: 'checkbox', value: String(day), onchange: () => ($('days-error').hidden = true) }), el('span', { textContent: name })),
+  ),
+);
+
 $('editor-form').onsubmit = async (event) => {
   event.preventDefault();
+  const days = chosenDays();
+  if (!days.length) {
+    $('days-error').hidden = false;
+    return;
+  }
   await window.settings.saveReminder({
     ...editing,
+    days,
     emoji: $('f-emoji').value,
     name: $('f-name').value,
     question: $('f-question').value,
