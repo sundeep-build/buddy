@@ -1,4 +1,4 @@
-// Water Buddy — settings window.
+// Buddy — settings window.
 // Shows the reminders and the character, and sends every change to the main process,
 // which answers by pushing the new state back.
 

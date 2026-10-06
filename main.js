@@ -1,4 +1,4 @@
-// Water Buddy — main process.
+// Buddy — main process.
 // Owns the reminder schedule, the transparent overlay window the buddy walks in,
 // the settings window and the menu-bar item.
 const { app, BrowserWindow, Tray, Menu, screen, ipcMain, nativeImage, dialog } = require('electron');
@@ -237,7 +237,7 @@ function openSettings() {
     height: 720,
     minWidth: 560,
     minHeight: 480,
-    title: 'Water Buddy',
+    title: 'Buddy',
     show: false,
     icon: path.join(__dirname, 'assets', 'icon.png'), // Windows and Linux; macOS uses the app's own icon
     autoHideMenuBar: true, // no File/Edit/View bar inside the window on Windows and Linux
@@ -396,10 +396,10 @@ function refreshTray() {
           click: () => startVisit(reminder),
         })),
       { type: 'separator' },
-      { label: 'Open Water Buddy…', click: openSettings },
+      { label: 'Open Buddy…', click: openSettings },
       { label: 'Pause reminders', type: 'checkbox', checked: state.paused, click: (item) => setPaused(item.checked) },
       { type: 'separator' },
-      { label: 'Quit Water Buddy', role: 'quit' },
+      { label: 'Quit Buddy', role: 'quit' },
     ]),
   );
 }
@@ -425,7 +425,7 @@ if (!app.requestSingleInstanceLock()) {
       tray = new Tray(path.join(__dirname, 'assets', 'tray.png'));
       tray.on('click', openSettings);
     }
-    tray.setToolTip('Water Buddy');
+    tray.setToolTip('Buddy');
     refreshTray();
 
     setInterval(checkDue, CHECK_SECONDS * 1000);

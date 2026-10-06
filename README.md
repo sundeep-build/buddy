@@ -1,4 +1,4 @@
-# Water Buddy
+# Buddy
 
 A small 3D character that walks onto your screen when it's time for something (water, lunch, a stretch) and asks whether you did it. Say yes and it celebrates. Say not yet and it walks away sad, then comes back to ask again.
 
@@ -46,8 +46,8 @@ The settings window opens when the app starts. Click **Remind me now** on a remi
 
 Reminders, today's counts and your character are saved per computer:
 
-- macOS: `~/Library/Application Support/Water Buddy/`
-- Windows: `%APPDATA%\Water Buddy\`
+- macOS: `~/Library/Application Support/Buddy/`
+- Windows: `%APPDATA%\Buddy\`
 
 ## Using your own character
 
@@ -64,8 +64,8 @@ In the settings window, under **Character**, click **Use my own character…** a
 ## Building the app
 
 ```bash
-npm run build:mac   # dist/Water Buddy-darwin-universal/Water Buddy.app  (run this on a Mac)
-npm run build:win   # dist/Water Buddy-win32-x64/Water Buddy.exe
+npm run build:mac   # dist/Buddy-darwin-universal/Buddy.app  (run this on a Mac)
+npm run build:win   # dist/Buddy-win32-x64/Buddy.exe
 npm run build       # both, on a Mac
 ```
 
@@ -76,7 +76,7 @@ The Mac build is one app for both Intel and Apple-silicon Macs. `build:mac` only
 The builds are not signed with an Apple Developer ID or a Windows certificate, so the system warns the first time:
 
 - **macOS:** open the app once, then go to System Settings → Privacy & Security and click **Open Anyway**.
-- **Windows:** unzip the whole folder and run `Water Buddy.exe`. If "Windows protected your PC" appears, click **More info**, then **Run anyway**.
+- **Windows:** unzip the whole folder and run `Buddy.exe`. If "Windows protected your PC" appears, click **More info**, then **Run anyway**.
 
 ## How the code is laid out
 

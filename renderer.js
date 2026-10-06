@@ -1,4 +1,4 @@
-// Water Buddy — overlay renderer.
+// Buddy — overlay renderer.
 // Draws the 3D buddy and plays one "visit": walk in, ask the reminder's question,
 // react to the answer, walk off again.
 import * as THREE from 'three';
