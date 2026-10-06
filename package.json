@@ -1,0 +1,21 @@
+{
+  "name": "water-buddy",
+  "productName": "Water Buddy",
+  "version": "1.1.0",
+  "description": "A 3D desktop buddy that walks onto your screen with your reminders",
+  "main": "main.js",
+  "scripts": {
+    "start": "node scripts/start.js",
+    "build": "npm run build:mac && npm run build:win",
+    "build:mac": "electron-packager . --platform=darwin --arch=universal --out=dist --overwrite --icon=assets/icon.icns --app-bundle-id=com.waterbuddy.app && codesign --force --deep --sign - \"dist/Water Buddy-darwin-universal/Water Buddy.app\"",
+    "build:win": "electron-packager . --platform=win32 --arch=x64 --out=dist --overwrite --icon=assets/icon.ico"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^44.5.1"
+  }
+}

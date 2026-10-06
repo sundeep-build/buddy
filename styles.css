@@ -1,0 +1,130 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  font: 15px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+#stage {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+/* Speech bubble: left/bottom are set from the buddy's position every frame. */
+.bubble {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: 280px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fff;
+  color: #1c2530;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) scale(0.8);
+  transform-origin: 50% 100%;
+  transition:
+    opacity 0.18s ease-out,
+    transform 0.24s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+.bubble.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) scale(1);
+}
+
+/* the little tail pointing down at the buddy */
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.bubble p {
+  margin: 0;
+  font-weight: 600;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.actions[hidden] {
+  display: none;
+}
+
+.actions button {
+  flex: 1;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #e9edf2;
+  color: #1c2530;
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    filter 0.12s,
+    transform 0.12s;
+}
+
+.actions button.primary {
+  background: #1d8cf8;
+  color: #fff;
+}
+
+.actions button:hover {
+  filter: brightness(0.94);
+}
+
+.actions button:active {
+  transform: scale(0.96);
+}
+
+/* celebration sparkles */
+#fx span {
+  position: absolute;
+  font-size: 24px;
+  opacity: 0;
+  pointer-events: none;
+  animation: float-up 1.6s ease-out forwards;
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-150px) scale(1.25);
+  }
+}

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
+    <title>Water Buddy</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <main>
+      <header class="top">
+        <div class="grow">
+          <h1>Water Buddy</h1>
+          <p class="muted">Your buddy walks onto the screen when it's time, and asks.</p>
+        </div>
+        <label class="pause">Pause all <input type="checkbox" id="paused" class="switch" /></label>
+      </header>
+
+      <section>
+        <div class="section-head">
+          <h2>Reminders</h2>
+          <button id="add" class="primary">Add reminder</button>
+        </div>
+        <div id="reminders" class="list"></div>
+      </section>
+
+      <section>
+        <div class="section-head"><h2>Character</h2></div>
+        <div id="character" class="card character"></div>
+      </section>
+    </main>
+
+    <dialog id="editor">
+      <form id="editor-form" method="dialog">
+        <h2 id="editor-title"></h2>
+        <div id="presets" class="chips"></div>
+        <div class="row">
+          <label class="field emoji-field"><span>Emoji</span><input id="f-emoji" maxlength="8" required /></label>
+          <label class="field grow"><span>Name</span><input id="f-name" maxlength="40" required /></label>
+        </div>
+        <label class="field"><span>What the buddy asks</span><input id="f-question" maxlength="140" required /></label>
+        <fieldset>
+          <legend>When</legend>
+          <label class="choice">
+            <input type="radio" name="when" id="f-interval" /> Every
+            <input type="number" id="f-minutes" min="1" max="1440" step="1" /> minutes
+          </label>
+          <label class="choice">
+            <input type="radio" name="when" id="f-daily" /> Every day at <input type="time" id="f-time" />
+          </label>
+        </fieldset>
+        <div class="dialog-actions">
+          <button type="button" id="delete" class="danger">Delete</button>
+          <span class="grow"></span>
+          <button type="button" id="cancel">Cancel</button>
+          <button type="submit" class="primary">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="settings.js"></script>
+  </body>
+</html>

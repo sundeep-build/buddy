@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; worker-src blob:; style-src 'self'; img-src 'self' blob: data:; connect-src 'self' blob: data:"
+    />
+    <title>Water Buddy</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./node_modules/three/build/three.module.js",
+          "three/addons/": "./node_modules/three/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="stage"></canvas>
+    <div id="fx"></div>
+    <div id="bubble" class="bubble">
+      <p id="bubble-text"></p>
+      <div id="bubble-actions" class="actions">
+        <button id="yes" class="primary">Yes, I did!</button>
+        <button id="no">Not yet</button>
+      </div>
+    </div>
+    <script type="module" src="renderer.js"></script>
+  </body>
+</html>
