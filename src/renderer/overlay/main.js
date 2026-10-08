@@ -19,7 +19,7 @@ const FACE_LEFT = -Math.PI / 2;
 // a custom character gets the same shape from the clips picked in Settings.
 // Any clip may be missing: the buddy then hops, spins or leans instead.
 const ROBOT = {
-  url: 'assets/RobotExpressive.glb',
+  url: '../../../assets/RobotExpressive.glb',
   walk: 'Walking',
   idle: 'Idle',
   greet: 'Wave',
@@ -222,7 +222,7 @@ function addCharacter(gltf, description) {
 async function loadCharacter() {
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
-  loader.setDRACOLoader(new DRACOLoader().setDecoderPath('node_modules/three/examples/jsm/libs/draco/gltf/'));
+  loader.setDRACOLoader(new DRACOLoader().setDecoderPath('../../../node_modules/three/examples/jsm/libs/draco/gltf/'));
 
   const custom = await window.buddy.getCharacter();
   if (custom) {

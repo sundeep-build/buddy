@@ -80,15 +80,29 @@ The builds are not signed with an Apple Developer ID or a Windows certificate, s
 
 ## How the code is laid out
 
-| File | What it does |
-| --- | --- |
-| `main.js` | Main process: the reminder schedule, the overlay window, the settings window, the menu bar / tray |
-| `renderer.js`, `index.html`, `styles.css` | The overlay: draws the character with three.js and plays one visit |
-| `settings.js`, `settings.html`, `settings.css` | The settings window |
-| `preload.js`, `settings-preload.js` | The bridges between each window and the main process |
-| `schedule.js` | Works out when each reminder is next due |
-| `presets.js` | The ready-made reminders and their texts |
-| `character.js` | Reads the animation list from a `.glb` and guesses which clip fits which moment |
-| `scripts/start.js` | Starts the app from source on any OS |
-| `assets/` | The robot model and the app icons |
+```
+assets/                  the robot model and the app icons
+docs/                    screenshots for this README
+scripts/start.js         starts the app from source on any OS
+src/
+  main/                  the main process
+    index.js               entry: starts everything and runs the reminder clock
+    state.js               what is remembered between launches; announces changes
+    scheduler.js           when each reminder comes next, pause
+    schedule.js            the date maths behind it
+    overlay.js             the overlay window and the visit in progress
+    settings-window.js     the settings window and what it can ask for
+    tray.js                the menu bar / tray item
+    presets.js             the ready-made reminders and their texts
+    character.js           reads the animation list from a .glb and guesses which clip fits which moment
+    paths.js               where files live
+  preload/               the bridges between each window and the main process
+    overlay.js, settings.js
+  renderer/
+    overlay/             draws the character with three.js and plays one visit
+    settings/            the settings window
+```
+
+Anything that changes what the settings window or the tray shows calls `changed()` from
+`src/main/state.js`; both redraw from that one event.
 

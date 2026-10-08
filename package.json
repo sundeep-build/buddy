@@ -3,12 +3,12 @@
   "productName": "Buddy",
   "version": "1.1.0",
   "description": "A 3D desktop buddy that walks onto your screen with your reminders",
-  "main": "main.js",
+  "main": "src/main/index.js",
   "scripts": {
     "start": "node scripts/start.js",
     "build": "npm run build:mac && npm run build:win",
-    "build:mac": "electron-packager . --platform=darwin --arch=universal --out=dist --overwrite --ignore=^/dist --ignore=^/docs --icon=assets/icon.icns --app-bundle-id=com.buddy.app && codesign --force --deep --sign - \"dist/Buddy-darwin-universal/Buddy.app\"",
-    "build:win": "electron-packager . --platform=win32 --arch=x64 --out=dist --overwrite --ignore=^/dist --ignore=^/docs --icon=assets/icon.ico"
+    "build:mac": "electron-packager . --platform=darwin --arch=universal --out=dist --overwrite --ignore=^/dist --ignore=^/docs --ignore=^/scripts --icon=assets/icon.icns --app-bundle-id=com.buddy.app && codesign --force --deep --sign - \"dist/Buddy-darwin-universal/Buddy.app\"",
+    "build:win": "electron-packager . --platform=win32 --arch=x64 --out=dist --overwrite --ignore=^/dist --ignore=^/docs --ignore=^/scripts --icon=assets/icon.ico"
   },
   "license": "MIT",
   "dependencies": {
